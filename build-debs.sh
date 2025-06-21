@@ -18,36 +18,28 @@ cp -r "$SRC_DIR"/* "$FINAL_DIR/"
 echo "🔁 Re-generating Python bindings in $FINAL_DIR"
 cd "$FINAL_DIR"
 
-# 🧹 Remove self-referencing or broken symlinks
 find "$FINAL_DIR/bin/" -xtype l -exec rm -v {} \;
-
-# ✅ Only chmod real files
 find "$FINAL_DIR/bin/" -type f -exec chmod +x {} \;
 
 rm -f tools/install_done.txt
 source ./otbenv.profile
 cd - > /dev/null
 
-# 1. otb-bin (main installation under /usr/lib/otb-<version>, with symlinks in /usr/bin)
+# 1. otb-bin
 mkdir -p "$BUILD_DIR/otb-bin/DEBIAN"
 mkdir -p "$BUILD_DIR/otb-bin/usr/lib/otb-$VERSION"
 mkdir -p "$BUILD_DIR/otb-bin/usr/bin"
 
-# Copy all except cmake (for dev package)
 rsync -a --exclude 'cmake' "$FINAL_DIR/" "$BUILD_DIR/otb-bin/usr/lib/otb-$VERSION/"
 
-# Create symlinks in /usr/bin for all binaries
 for exe in "$BUILD_DIR/otb-bin/usr/lib/otb-$VERSION/bin/"*; do
   [ -x "$exe" ] || continue
   exe_name=$(basename "$exe")
   ln -s "/usr/lib/otb-$VERSION/bin/$exe_name" "$BUILD_DIR/otb-bin/usr/bin/$exe_name"
 done
 
-# Symlink otbenv.profile to /etc/profile.d/
 mkdir -p "$BUILD_DIR/otb-bin/etc/profile.d"
 ln -s "/usr/lib/otb-$VERSION/otbenv.profile" "$BUILD_DIR/otb-bin/etc/profile.d/otb.sh"
-mkdir -p "$BUILD_DIR/libotb-dev/usr/lib/otb-$VERSION/lib"
-find "$FINAL_DIR/lib" -name '*.so' -exec cp {} "$BUILD_DIR/libotb-dev/usr/lib/otb-$VERSION/lib/" \;
 
 cat > "$BUILD_DIR/otb-bin/DEBIAN/control" <<EOF
 Package: otb-bin
@@ -66,6 +58,9 @@ mkdir -p "$BUILD_DIR/libotb-dev/usr/lib/otb-$VERSION/lib"
 
 cp -r "$FINAL_DIR/include/"* "$BUILD_DIR/libotb-dev/usr/include/otb/"
 cp -r "$FINAL_DIR/lib/cmake" "$BUILD_DIR/libotb-dev/usr/lib/otb-$VERSION/lib/"
+
+# Solo copiar symlinks de desarrollo (no las .so reales)
+find "$FINAL_DIR/lib" -type l -name 'lib*.so' -exec cp --dereference {} "$BUILD_DIR/libotb-dev/usr/lib/otb-$VERSION/lib/" \;
 
 cat > "$BUILD_DIR/libotb-dev/DEBIAN/control" <<EOF
 Package: libotb-dev

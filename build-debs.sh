@@ -27,7 +27,7 @@ find "$FINAL_DIR/bin/" -type f -exec chmod +x {} \;
 rm -f tools/install_done.txt
 source ./otbenv.profile
 
-cd - >/dev/null
+cd - > /dev/null
 
 
 # 1. otb-bin

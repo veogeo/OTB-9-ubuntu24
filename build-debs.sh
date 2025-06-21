@@ -18,6 +18,7 @@ cp -r "$SRC_DIR"/* "$FINAL_DIR/"
 echo "🔁 Re-generating Python bindings in $FINAL_DIR"
 cd "$FINAL_DIR"
 
+chmod +x "$FINAL_DIR/bin/"*
 rm -f tools/install_done.txt
 source ./otbenv.profile
 

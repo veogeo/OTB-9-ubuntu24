@@ -35,6 +35,7 @@ rsync -a --exclude='lib/cmake' "$FINAL_DIR/" "$BUILD_DIR/otb-bin/usr/lib/otb-$VE
 for script in otbcli otbgui; do
   WRAPPER="$BUILD_DIR/otb-bin/usr/lib/otb-$VERSION/bin/$script"
   if [ -f "$WRAPPER" ]; then
+    sed -i '1 s|^#!.*|#!/bin/bash|' "$WRAPPER"
     sed -i 's|\. "\$CURRENT_SCRIPT_DIR/../otbenv\.profile"|. /usr/lib/otb-'"$VERSION"'/otbenv.profile|' "$WRAPPER"
   fi
 done

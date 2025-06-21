@@ -15,10 +15,21 @@ mkdir -p "$FINAL_DIR" "$BUILD_DIR"
 echo "📁 Copying OTB source into $FINAL_DIR"
 cp -r "$SRC_DIR"/* "$FINAL_DIR/"
 
-echo "⏸️  Stop here and recompile Python bindings inside:"
-echo "    $FINAL_DIR"
-echo "Then press ENTER to continue packaging."
-read
+echo "🔁 Re-generating Python bindings in $FINAL_DIR"
+cd "$FINAL_DIR"
+
+rm -f tools/install_done.txt
+source ./otbenv.profile
+
+if [ -f ./lib/python/otbApplication/otbGenerateWrappers.py ]; then
+  echo "⚙️  Running otbGenerateWrappers.py"
+  python3 ./lib/python/otbApplication/otbGenerateWrappers.py
+else
+  echo "⚠️  Python wrapper generator not found! Skipping binding regeneration."
+fi
+
+cd - >/dev/null
+
 
 # 1. otb-bin
 mkdir -p "$BUILD_DIR/otb-bin/DEBIAN"

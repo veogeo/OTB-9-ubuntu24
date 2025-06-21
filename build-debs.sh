@@ -36,13 +36,11 @@ for exe in "$BUILD_DIR/otb-bin/usr/lib/otb-$VERSION/bin/"*; do
   [ -x "$exe" ] || continue
   exe_name=$(basename "$exe")
 
-  # ⚠️ Excluir binarios que entran en conflicto con proj-bin
-  case "$exe_name" in
-    cct|cs2cs|geod|invgeod|invproj|proj|curl)
-      echo "⏩ Skipping conflicting binary: $exe_name"
-      continue
-      ;;
-  esac
+  # ⚠️ Excluir binarios si ya existen en el sistema como parte de otro paquete
+  if dpkg -S "/usr/bin/$exe_name" 2>/dev/null | grep -vq "no path found" && dpkg -S "/usr/bin/$exe_name" 2>/dev/null | grep -qv otb; then
+    echo "⏩ Skipping system-installed binary: $exe_name (belongs to another package)"
+    continue
+  fi
 
   ln -s "/usr/lib/otb-$VERSION/bin/$exe_name" "$BUILD_DIR/otb-bin/usr/bin/$exe_name"
 done

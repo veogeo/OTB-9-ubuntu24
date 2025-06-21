@@ -1,4 +1,4 @@
-# Orfeo Toolbox 9.1.1 – Debian Packaging
+# Orfeo Toolbox 9.1.1 – Ubuntu 24 Packaging
 
 This repository provides an unofficial repackaging of [Orfeo Toolbox (OTB)](https://www.orfeo-toolbox.org) version 9.1.1, extracted from a Docker image, and repackaged into modular `.deb` packages suitable for Debian-based systems.
 

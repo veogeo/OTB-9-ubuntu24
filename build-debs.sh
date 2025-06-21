@@ -18,7 +18,12 @@ cp -r "$SRC_DIR"/* "$FINAL_DIR/"
 echo "🔁 Re-generating Python bindings in $FINAL_DIR"
 cd "$FINAL_DIR"
 
-chmod +x "$FINAL_DIR/bin/"*
+# 🧹 Remove self-referencing or broken symlinks
+find "$FINAL_DIR/bin/" -xtype l -exec rm -v {} \;
+
+# ✅ Only chmod real files
+find "$FINAL_DIR/bin/" -type f -exec chmod +x {} \;
+
 rm -f tools/install_done.txt
 source ./otbenv.profile
 

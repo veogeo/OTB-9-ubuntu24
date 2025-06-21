@@ -8,8 +8,7 @@ This repository provides an unofficial repackaging of [Orfeo Toolbox (OTB)](http
 .
 ├── dist/
 │   └── otb-9.1.1/           ← Full extracted OTB install (from Docker)
-├── scripts/
-│   └── build-debs.sh        ← Build script for modular .deb packages
+├── build-debs.sh            ← Build script for modular .deb packages
 ├── LICENSE                  ← Apache 2.0 license from OTB
 └── README.md
 ```
@@ -36,18 +35,18 @@ dist/otb-9.1.1/
 The structure should include:
 
 ```
-bin/        ← CLI binaries
-lib/        ← Shared libraries and CMake files
-include/    ← Headers for development
-share/      ← Auxiliary files
-lib/python*/ ← (optional) Python bindings
+bin/          ← CLI binaries
+include/      ← Headers for development
+lib/          ← Shared libraries and CMake files
+share/        ← Auxiliary files
+lib/python*/  ← (optional) Python bindings
 ```
 
 ### 3. Run the packaging script
 
 ```bash
 chmod +x scripts/build-debs.sh
-./scripts/build-debs.sh
+./build-debs.sh
 ```
 
 This will generate:
@@ -75,7 +74,7 @@ This will install OTB under `/opt/otb-9.1.1/` with optional symbolic links under
 
   ```bash
   rm /opt/otb-9.1.1/tools/install_done.txt
-  source /opt/otb-9.1.1/otbenv.profile
+  source /opt/otb-9.1.1/otbenv.profile sh recompile_bindings.sh
   ```
 
 - This only needs to be done **once after relocation**, not on every shell startup.
@@ -85,19 +84,19 @@ This will install OTB under `/opt/otb-9.1.1/` with optional symbolic links under
 - To ensure full runtime availability, you may add to your environment:
 
   ```bash
-  source /opt/otb-9.1.1/otbenv.profile
+  source /opt/otb-9.1.1/otbenv.profile 
   ```
 
 ---
 
 ## 📦 Package Breakdown
 
-| Package         | Contents                        | Depends On       |
-|-----------------|----------------------------------|------------------|
-| `otb-bin`       | CLI binaries, shared tools       | -                |
-| `libotb-dev`    | C++ headers, CMake config files  | `otb-bin`        |
-| `python3-otb`   | Python 3 bindings                | `otb-bin`, `python3` |
-| `otb-examples`  | Optional scripts and examples    | `otb-bin`        |
+| Package         | Contents                        | Depends On           |
+|-----------------|---------------------------------|----------------------|
+| `otb-bin`       | CLI binaries, shared tools      | -                    |
+| `libotb-dev`    | C++ headers, CMake config files | `otb-bin`            |
+| `python3-otb`   | Python 3 bindings               | `otb-bin`, `python3` |
+| `otb-examples`  | Optional scripts and examples   | `otb-bin`            |
 
 ---
 
@@ -105,7 +104,7 @@ This will install OTB under `/opt/otb-9.1.1/` with optional symbolic links under
 
 This repository contains an **unofficial repackaging** of [Orfeo Toolbox (OTB)](https://www.orfeo-toolbox.org), version 9.1.1, originally licensed under the [Apache License 2.0](https://www.apache.org/licenses/LICENSE-2.0).
 
-> © 2006–2023 CNES and contributors to the OTB project
+> © 2006–2025 CNES and contributors to the OTB project
 
 This work is not affiliated with or endorsed by the official OTB project.
 

@@ -20,8 +20,8 @@ This repository provides an unofficial repackaging of [Orfeo Toolbox (OTB)](http
 ### 1. Clone the repository
 
 ```bash
-git clone https://github.com/your-user/otb-deb.git
-cd otb-deb
+git clone https://github.com/veogeo/OTB-9-ubuntu24.git
+cd OTB-9-ubuntu24
 ```
 
 ### 2. Place OTB files under `dist/`

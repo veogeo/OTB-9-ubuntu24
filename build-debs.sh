@@ -38,7 +38,7 @@ for exe in "$BUILD_DIR/otb-bin/usr/lib/otb-$VERSION/bin/"*; do
 
   # ⚠️ Excluir binarios que entran en conflicto con proj-bin
   case "$exe_name" in
-    cct|cs2cs|geod|invgeod|invproj|proj)
+    cct|cs2cs|geod|invgeod|invproj|proj|curl)
       echo "⏩ Skipping conflicting binary: $exe_name"
       continue
       ;;

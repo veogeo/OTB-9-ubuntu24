@@ -31,6 +31,14 @@ mkdir -p "$BUILD_DIR/otb-bin/usr/bin"
 # Copiar TODO (excepto CMake que irá a libotb-dev)
 rsync -a --exclude='lib/cmake' "$FINAL_DIR/" "$BUILD_DIR/otb-bin/usr/lib/otb-$VERSION/"
 
+# Reescribe wrapper otbcli y otbgui para usar path absoluto correcto
+for script in otbcli otbgui; do
+  WRAPPER="$BUILD_DIR/otb-bin/usr/lib/otb-$VERSION/bin/$script"
+  if [ -f "$WRAPPER" ]; then
+    sed -i "s|\.\.\/otbenv.profile|/usr/lib/otb-$VERSION/otbenv.profile|g" "$WRAPPER"
+  fi
+done
+
 # Symlinks en /usr/bin
 for exe in "$BUILD_DIR/otb-bin/usr/lib/otb-$VERSION/bin/"*; do
   [ -x "$exe" ] || continue

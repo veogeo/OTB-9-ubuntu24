@@ -66,8 +66,8 @@ mkdir -p "$BUILD_DIR/libotb-dev/usr/lib/otb-$VERSION/lib"
 cp -r "$FINAL_DIR/include/"* "$BUILD_DIR/libotb-dev/usr/include/otb/"
 cp -r "$FINAL_DIR/lib/cmake" "$BUILD_DIR/libotb-dev/usr/lib/otb-$VERSION/lib/"
 
-# Solo copiar symlinks de desarrollo (no las .so reales)
-find "$FINAL_DIR/lib" -type l -name 'lib*.so' -exec cp --dereference {} "$BUILD_DIR/libotb-dev/usr/lib/otb-$VERSION/lib/" \;
+# Solo copiar symlinks tipo libXYZ.so (sin número de versión), sin duplicar .so reales
+find "$FINAL_DIR/lib" -type l -name 'lib*.so' -exec cp -P {} "$BUILD_DIR/libotb-dev/usr/lib/otb-$VERSION/lib/" \;
 
 cat > "$BUILD_DIR/libotb-dev/DEBIAN/control" <<EOF
 Package: libotb-dev

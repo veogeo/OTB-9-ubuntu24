@@ -17,10 +17,8 @@ cp -r "$SRC_DIR"/* "$FINAL_DIR/"
 
 echo "🔁 Re-generating Python bindings in $FINAL_DIR"
 cd "$FINAL_DIR"
-
 find "$FINAL_DIR/bin/" -xtype l -exec rm -v {} \;
 find "$FINAL_DIR/bin/" -type f -exec chmod +x {} \;
-
 rm -f tools/install_done.txt
 source ./otbenv.profile
 cd - > /dev/null
@@ -30,21 +28,24 @@ mkdir -p "$BUILD_DIR/otb-bin/DEBIAN"
 mkdir -p "$BUILD_DIR/otb-bin/usr/lib/otb-$VERSION"
 mkdir -p "$BUILD_DIR/otb-bin/usr/bin"
 
-rsync -a --exclude 'cmake' "$FINAL_DIR/" "$BUILD_DIR/otb-bin/usr/lib/otb-$VERSION/"
+# Copiar TODO (excepto CMake que irá a libotb-dev)
+rsync -a --exclude='lib/cmake' "$FINAL_DIR/" "$BUILD_DIR/otb-bin/usr/lib/otb-$VERSION/"
 
+# Symlinks en /usr/bin
 for exe in "$BUILD_DIR/otb-bin/usr/lib/otb-$VERSION/bin/"*; do
   [ -x "$exe" ] || continue
   exe_name=$(basename "$exe")
 
-  # ⚠️ Excluir binarios si ya existen en el sistema como parte de otro paquete
-  if dpkg -S "/usr/bin/$exe_name" 2>/dev/null | grep -vq "no path found" && dpkg -S "/usr/bin/$exe_name" 2>/dev/null | grep -qv otb; then
-    echo "⏩ Skipping system-installed binary: $exe_name (belongs to another package)"
-    continue
-  fi
+# ⚠️ Excluir binarios si ya existen en el sistema como parte de otro paquete
+if dpkg -S "/usr/bin/$exe_name" 2>/dev/null | grep -vq "no path found" && dpkg -S "/usr/bin/$exe_name" 2>/dev/null | grep -qv otb; then
+  echo "⏩ Skipping system-installed binary: $exe_name (belongs to another package)"
+  continue
+fi
 
   ln -s "/usr/lib/otb-$VERSION/bin/$exe_name" "$BUILD_DIR/otb-bin/usr/bin/$exe_name"
 done
 
+# Symlink a otbenv.profile
 mkdir -p "$BUILD_DIR/otb-bin/etc/profile.d"
 ln -s "/usr/lib/otb-$VERSION/otbenv.profile" "$BUILD_DIR/otb-bin/etc/profile.d/otb.sh"
 
@@ -63,11 +64,9 @@ mkdir -p "$BUILD_DIR/libotb-dev/DEBIAN"
 mkdir -p "$BUILD_DIR/libotb-dev/usr/include/otb"
 mkdir -p "$BUILD_DIR/libotb-dev/usr/lib/otb-$VERSION/lib"
 
+# Solo headers y cmake (no .so)
 cp -r "$FINAL_DIR/include/"* "$BUILD_DIR/libotb-dev/usr/include/otb/"
 cp -r "$FINAL_DIR/lib/cmake" "$BUILD_DIR/libotb-dev/usr/lib/otb-$VERSION/lib/"
-
-# Solo copiar symlinks tipo libXYZ.so (sin número de versión), sin duplicar .so reales
-find "$FINAL_DIR/lib" -type l -name 'lib*.so' -exec cp -P {} "$BUILD_DIR/libotb-dev/usr/lib/otb-$VERSION/lib/" \;
 
 cat > "$BUILD_DIR/libotb-dev/DEBIAN/control" <<EOF
 Package: libotb-dev

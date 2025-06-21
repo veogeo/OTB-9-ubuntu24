@@ -27,14 +27,7 @@ find "$FINAL_DIR/bin/" -type f -exec chmod +x {} \;
 rm -f tools/install_done.txt
 source ./otbenv.profile
 
-if [ -f ./lib/python/otbApplication/otbGenerateWrappers.py ]; then
-  echo "⚙️  Running otbGenerateWrappers.py"
-  python3 ./lib/python/otbApplication/otbGenerateWrappers.py
-else
-  echo "⚠️  Python wrapper generator not found! Skipping binding regeneration."
-fi
-
-cd - >/dev/null
+cd - > /dev/null
 
 
 # 1. otb-bin
@@ -71,12 +64,13 @@ Depends: otb-bin (= $VERSION)
 EOF
 
 # 3. python3-otb (only if present)
-if compgen -G "$FINAL_DIR/lib/python3*" > /dev/null; then
+# if compgen -G "$FINAL_DIR/lib/python3*" > /dev/null; then
+if [ -f "$FINAL_DIR/lib/otb/python/_otbApplication.so" ]; then
   mkdir -p "$BUILD_DIR/python3-otb/DEBIAN"
-  DEST_LIB="$BUILD_DIR/python3-otb/opt/otb-$VERSION/lib"
+  DEST_LIB="$BUILD_DIR/python3-otb/otb-$VERSION/lib/otb"
   mkdir -p "$DEST_LIB"
 
-  cp -r "$FINAL_DIR/lib/python3"* "$DEST_LIB/"
+  cp -r "$FINAL_DIR/lib/otb/python" "$DEST_LIB/"
 
   cat > "$BUILD_DIR/python3-otb/DEBIAN/control" <<EOF
 Package: python3-otb

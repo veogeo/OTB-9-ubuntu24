@@ -63,6 +63,7 @@ EOF
 mkdir -p "$BUILD_DIR/libotb-dev/DEBIAN"
 mkdir -p "$BUILD_DIR/libotb-dev/usr/include/otb"
 mkdir -p "$BUILD_DIR/libotb-dev/usr/lib/otb-$VERSION/lib"
+
 cp -r "$FINAL_DIR/include/"* "$BUILD_DIR/libotb-dev/usr/include/otb/"
 cp -r "$FINAL_DIR/lib/cmake" "$BUILD_DIR/libotb-dev/usr/lib/otb-$VERSION/lib/"
 

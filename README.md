@@ -45,7 +45,7 @@ lib/python*/  ← (optional) Python bindings
 ### 3. Run the packaging script
 
 ```bash
-chmod +x scripts/build-debs.sh
+chmod +x build-debs.sh
 ./build-debs.sh
 ```
 

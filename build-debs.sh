@@ -56,8 +56,10 @@ EOF
 # 3. python3-otb (only if present)
 if compgen -G "$FINAL_DIR/lib/python3*" > /dev/null; then
   mkdir -p "$BUILD_DIR/python3-otb/DEBIAN"
-  mkdir -p "$BUILD_DIR/python3-otb"
-  cp -r "$FINAL_DIR/lib/python3"* "$BUILD_DIR/python3-otb/otb-$VERSION/lib/"
+  DEST_LIB="$BUILD_DIR/python3-otb/opt/otb-$VERSION/lib"
+  mkdir -p "$DEST_LIB"
+
+  cp -r "$FINAL_DIR/lib/python3"* "$DEST_LIB/"
 
   cat > "$BUILD_DIR/python3-otb/DEBIAN/control" <<EOF
 Package: python3-otb

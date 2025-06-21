@@ -31,12 +31,11 @@ mkdir -p "$BUILD_DIR/otb-bin/usr/bin"
 # Copiar TODO (excepto CMake que irá a libotb-dev)
 rsync -a --exclude='lib/cmake' "$FINAL_DIR/" "$BUILD_DIR/otb-bin/usr/lib/otb-$VERSION/"
 
-# 🔧 Reescribir otbcli y otbgui para que usen la ruta absoluta al otbenv.profile
+# 🔧 Reescribir otbcli y otbgui para que usen la ruta absoluta correcta a otbenv.profile
 for script in otbcli otbgui; do
   WRAPPER="$BUILD_DIR/otb-bin/usr/lib/otb-$VERSION/bin/$script"
   if [ -f "$WRAPPER" ]; then
-    # Reemplaza línea que intenta hacer ". ../otbenv.profile"
-    sed -i "s|^\.\s\+\.\./otbenv\.profile|. /usr/lib/otb-$VERSION/otbenv.profile|" "$WRAPPER"
+    sed -i 's|\. "\$CURRENT_SCRIPT_DIR/../otbenv\.profile"|. /usr/lib/otb-'"$VERSION"'/otbenv.profile|' "$WRAPPER"
   fi
 done
 

@@ -1,0 +1,14 @@
+prefix=/builds/otb/xdk
+exec_prefix=${prefix}
+libdir=${exec_prefix}/lib
+includedir=${prefix}/include
+
+Name: dfalt
+Description: HDF (Hierarchical Data Format 4) Software Library
+Version: 4.2.15
+
+Cflags: -I${includedir}
+Libs: -L${libdir}  -ldfalt -lmfhdfalt
+Requires: 
+Libs.private:  -lm -ldl -l/builds/otb/xdk/lib/libjpeg.so -l/builds/otb/xdk/lib/libz.so  -ldfalt -lmfhdfalt
+Requires.private: 

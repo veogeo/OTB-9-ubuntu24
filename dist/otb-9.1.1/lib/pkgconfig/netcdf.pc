@@ -1,0 +1,13 @@
+prefix=/builds/otb/xdk
+exec_prefix=/builds/otb/xdk
+libdir=/builds/otb/xdk/lib
+includedir=/builds/otb/xdk/include
+ccompiler=/usr/bin/cc
+
+Name: netCDF
+Description: NetCDF Client Library for C
+URL: https://www.unidata.ucar.edu/netcdf
+Version: 4.9.2
+Libs: -L${libdir} -lnetcdf
+Libs.private: -lmfhdfalt -ldfalt -lhdf5_hl -lhdf5 -lm -lz -lcurl
+Cflags: -I${includedir}

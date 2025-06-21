@@ -1,0 +1,17 @@
+CONFIG_VERSION=3.9.0
+CONFIG_INST_PREFIX=/builds/otb/xdk
+CONFIG_INST_LIBS=-L/builds/otb/xdk/lib -lgdal
+CONFIG_INST_CFLAGS=-I/builds/otb/xdk/include
+CONFIG_INST_DATA=/builds/otb/xdk/share/gdal
+prefix=${CONFIG_INST_PREFIX}
+exec_prefix=${prefix}
+libdir=${exec_prefix}/lib
+includedir=${exec_prefix}/include
+datadir=${CONFIG_INST_DATA}
+
+Name: libgdal
+Description: Geospatial Data Abstraction Library
+Version: ${CONFIG_VERSION}
+Libs: ${CONFIG_INST_LIBS}
+Libs.private: -L/builds/otb/xdk/lib -lssl -lcrypto -lgeotiff -ltiff -lLerc -ljpeg -lpng -lnetcdf -lhdf5_hl -lhdf5 -ldl -ldfalt -lmfhdfalt -lxdr -lz -lopenjp2 -lsqlite3 -lexpat -lgeos_c -lcurl -lproj -lpthread -lstdc++ -lm
+Cflags: ${CONFIG_INST_CFLAGS}

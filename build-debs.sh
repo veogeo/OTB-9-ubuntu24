@@ -46,6 +46,7 @@ done
 # Symlink otbenv.profile to /etc/profile.d/
 mkdir -p "$BUILD_DIR/otb-bin/etc/profile.d"
 ln -s "/usr/lib/otb-$VERSION/otbenv.profile" "$BUILD_DIR/otb-bin/etc/profile.d/otb.sh"
+mkdir -p "$BUILD_DIR/libotb-dev/usr/lib/otb-$VERSION/lib"
 find "$FINAL_DIR/lib" -name '*.so' -exec cp {} "$BUILD_DIR/libotb-dev/usr/lib/otb-$VERSION/lib/" \;
 
 cat > "$BUILD_DIR/otb-bin/DEBIAN/control" <<EOF

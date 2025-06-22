@@ -24,7 +24,11 @@ echo "🛠️ Compilando OTB desde fuente..."
 rm -rf "$BUILD_SRC"
 mkdir -p "$BUILD_SRC"
 cd "$BUILD_SRC"
-cmake "$SRC_DIR" -DCMAKE_INSTALL_PREFIX="$INSTALL_DIR" -DOTB_USE_NEURALNET=OFF -DCMAKE_BUILD_TYPE=Release
+if [ ! -d /usr/lib/x86_64-linux-gnu/cmake/ITK-5.3/ITKModuleAPI.cmake ]; then
+  echo "🔧 Moviendo ITKModuleAPI.cmake a /tmp para evitar conflictos..."
+  sudo mv /usr/lib/x86_64-linux-gnu/cmake/ITK-5.3/ITKModuleAPI.cmake /tmp
+fi
+cmake "$SRC_DIR" -DCMAKE_INSTALL_PREFIX="$INSTALL_DIR" -DCMAKE_BUILD_TYPE=Release
 make -j"$(nproc)"
 sudo make install
 cd -
@@ -109,6 +113,13 @@ echo "📦 Construyendo paquetes .deb..."
 dpkg-deb --build "$PKG_BIN"
 dpkg-deb --build "$PKG_PY"
 dpkg-deb --build "$PKG_DEV"
+
+sudo mv /tmp/ITKModuleAPI.cmake  /usr/lib/x86_64-linux-gnu/cmake/ITK-5.3/
+
+if [ -d /tmp/ITKModuleAPI.cmake ]; then
+  echo "🔧 Restaurando ITKModuleAPI.cmake..."
+  sudo mv /usr/lib/x86_64-linux-gnu/cmake/ITK-5.3/ITKModuleAPI.cmake /tmp
+fi
 
 echo "✅ Paquetes generados en $BUILD_DEB:"
 ls -lh "$BUILD_DEB"/*.deb

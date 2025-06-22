@@ -5,6 +5,9 @@ set -e
 OTB_DIR="/opt/otb-9.1.1"
 OTB_TAR_URL="https://gitlab.orfeo-toolbox.org/orfeotoolbox/otb/-/archive/9.1.1/otb-9.1.1.tar.gz"
 SRC_DIR="$(pwd)/otb-9.1.1"
+OTB_VERSION=9.1.1
+OTB_MAJOR=9.1
+OTB_PKG="otb-${OTB_VERSION}"
 
 # 🔽 Descargar y descomprimir fuente si no existe
 if [ ! -d "$SRC_DIR" ]; then
@@ -13,10 +16,6 @@ if [ ! -d "$SRC_DIR" ]; then
   tar xzf otb-9.1.1.tar.gz
 fi
 
-# 🔎 Detectar versión desde archivo de configuración
-OTB_VERSION=$(grep -Po '(?<=set\(OTB_VERSION_STRING ")[^"]+' "$OTB_DIR/lib/cmake/OTB*/OTBConfig.cmake" | head -1)
-OTB_MAJOR=$(echo "$OTB_VERSION" | cut -d. -f1)
-OTB_PKG="otb-${OTB_VERSION}"
 
 # 📁 Directorio temporal de trabajo
 BUILD_DIR="$(pwd)/build-otb-${OTB_VERSION}"

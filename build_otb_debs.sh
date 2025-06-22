@@ -9,7 +9,7 @@ SRC_DIR="$(pwd)/otb-9.1.1"
 # 🔽 Descargar y descomprimir fuente si no existe
 if [ ! -d "$SRC_DIR" ]; then
   echo "📥 Descargando fuente de OTB 9.1.1..."
-  wget -O otb-9.1.1.tar.gz "$OTB_TAR_URL"
+  wget -c -O otb-9.1.1.tar.gz "$OTB_TAR_URL"
   tar xzf otb-9.1.1.tar.gz
 fi
 

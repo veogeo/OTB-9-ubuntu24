@@ -88,7 +88,7 @@ rsync -a "$INSTALL_DIR/" "$PKG_BIN/$INSTALL_DIR/" \
   --include 'lib/***' \
   --include 'share/***' \
   --exclude='include' \
-  --exclude='cmake' \
+  --exclude='lib/cmake/***' \
   --exclude='*.h' \
   --delete
 

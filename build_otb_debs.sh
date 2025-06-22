@@ -108,6 +108,7 @@ rsync -a "$INSTALL_DIR/" "$PKG_BIN/$INSTALL_DIR/" \
   --include 'bin/***' \
   --include 'lib/***' \
   --include 'share/***' \
+  --exclude='otb/python/***' \
   --exclude='include' \
   --exclude='cmake' \
   --exclude='*.h' \

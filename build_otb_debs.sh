@@ -68,6 +68,7 @@ echo "📦 Generando paquetes .deb desde $INSTALL_DIR"
 rm -rf "$BUILD_DEB"
 mkdir -p "$BUILD_DEB"
 
+
 ## libotb-dev
 PKG_DEV="$BUILD_DEB/libotb-dev"
 mkdir -p "$PKG_DEV/DEBIAN"
@@ -89,32 +90,6 @@ rsync -a "$INSTALL_DIR/lib/pkgconfig" "$PKG_DEV/$INSTALL_DIR/lib/"
 
 mv "$INSTALL_DIR/lib/cmake" /tmp
 
-## otb-bin
-PKG_BIN="$BUILD_DEB/${OTB_PKG}-bin"
-mkdir -p "$PKG_BIN/DEBIAN"
-mkdir -p "$PKG_BIN/$INSTALL_DIR"
-
-cat > "$PKG_BIN/DEBIAN/control" <<EOF
-Package: otb-bin
-Version: $OTB_VERSION
-Section: science
-Priority: optional
-Architecture: amd64
-Maintainer: TuNombre <tu@email.com>
-Description: Orfeo Toolbox $OTB_VERSION (binarios y librerías principales)
-EOF
-
-rsync -a "$INSTALL_DIR/" "$PKG_BIN/$INSTALL_DIR/" \
-  --include 'bin/***' \
-  --include 'lib/***' \
-  --include 'share/***' \
-  --exclude='otb/python/***' \
-  --exclude='include' \
-  --exclude='cmake' \
-  --exclude='*.h' \
-  --delete
-
-mv /tmp/cmake "$INSTALL_DIR"/lib/
 
 ## python3-otb
 PKG_PY="$BUILD_DEB/python3-${OTB_PKG}"
@@ -136,6 +111,37 @@ rsync -a "$INSTALL_DIR/lib/otb/python" "$PKG_PY/$INSTALL_DIR/lib/otb/"
 
 # 🔧 Final
 find "$BUILD_DEB" -type d -exec chmod 755 {} \;
+
+mv "$INSTALL_DIR/lib/otb/python" /tmp
+
+
+## otb-bin
+PKG_BIN="$BUILD_DEB/${OTB_PKG}-bin"
+mkdir -p "$PKG_BIN/DEBIAN"
+mkdir -p "$PKG_BIN/$INSTALL_DIR"
+
+cat > "$PKG_BIN/DEBIAN/control" <<EOF
+Package: otb-bin
+Version: $OTB_VERSION
+Section: science
+Priority: optional
+Architecture: amd64
+Maintainer: TuNombre <tu@email.com>
+Description: Orfeo Toolbox $OTB_VERSION (binarios y librerías principales)
+EOF
+
+rsync -a "$INSTALL_DIR/" "$PKG_BIN/$INSTALL_DIR/" \
+  --include 'bin/***' \
+  --include 'lib/***' \
+  --include 'share/***' \
+  --exclude='include' \
+  --exclude='cmake' \
+  --exclude='*.h' \
+  --delete
+
+# Regresar las bibliotecas de OTB y Python a sus ubicaciones originales
+mv /tmp/cmake "$INSTALL_DIR"/lib/
+mv /tmp/python "$INSTALL_DIR"/lib/otb/
 
 echo "📦 Construyendo paquetes .deb..."
 dpkg-deb --build "$PKG_BIN"

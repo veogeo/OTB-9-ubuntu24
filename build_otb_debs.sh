@@ -2,16 +2,27 @@
 set -e
 
 OTB_VERSION=9.1.1
-OTB_MAJOR=9.1
 OTB_PKG="otb-${OTB_VERSION}"
-OTB_TAR="otb-${OTB_VERSION}.tar.gz"
+OTB_TAR="${OTB_PKG}.tar.gz"
 OTB_TAR_URL="https://gitlab.orfeo-toolbox.org/orfeotoolbox/otb/-/archive/${OTB_VERSION}/${OTB_TAR}"
-SRC_DIR="$(pwd)/otb-${OTB_VERSION}"
-BUILD_SRC="$(pwd)/build-otb-src"
-INSTALL_DIR="/opt/otb-${OTB_VERSION}"
-BUILD_DEB="$(pwd)/build-otb-${OTB_VERSION}"
 
-echo "📥 Verificando código fuente..."
+SRC_DIR="$(pwd)/${OTB_PKG}"
+SB_DIR="$(pwd)/build-superbuild-${OTB_VERSION}"
+INSTALL_DIR="/opt/${OTB_PKG}"
+BUILD_DEB="$(pwd)/build-deb-${OTB_VERSION}"
+
+# 🧩 Instalar dependencias del sistema
+echo "📦 Instalando dependencias del sistema..."
+sudo apt update
+sudo apt install -y \
+  build-essential cmake git wget rsync fakeroot dpkg-dev devscripts \
+  libgdal-dev qtbase5-dev qttools5-dev qttools5-dev-tools \
+  libboost-all-dev libtiff-dev libjpeg-dev libpng-dev zlib1g-dev \
+  libexpat1-dev libcurl4-openssl-dev libopenthreads-dev \
+  python3 python3-dev python3-numpy libfreetype-dev \
+  libopenjp2-7-dev libgeos-dev libxt-dev
+
+# 📥 Descargar fuente de OTB
 if [ ! -d "$SRC_DIR" ]; then
   if [ ! -f "$OTB_TAR" ]; then
     echo "📥 Descargando $OTB_TAR..."
@@ -20,26 +31,44 @@ if [ ! -d "$SRC_DIR" ]; then
   tar xzf "$OTB_TAR"
 fi
 
-echo "🛠️ Compilando OTB desde fuente..."
-rm -rf "$BUILD_SRC"
-mkdir -p "$BUILD_SRC"
-cd "$BUILD_SRC"
-if [ ! -d /usr/lib/x86_64-linux-gnu/cmake/ITK-5.3/ITKModuleAPI.cmake ]; then
-  echo "🔧 Moviendo ITKModuleAPI.cmake a /tmp para evitar conflictos..."
-  sudo mv /usr/lib/x86_64-linux-gnu/cmake/ITK-5.3/ITKModuleAPI.cmake /tmp
-fi
-cmake "$SRC_DIR" -DCMAKE_INSTALL_PREFIX="$INSTALL_DIR" -DCMAKE_BUILD_TYPE=Release
+# ⚙️ Configurar y compilar con SuperBuild
+echo "🛠️ Configurando SuperBuild..."
+rm -rf "$SB_DIR"
+mkdir -p "$SB_DIR"
+cd "$SB_DIR"
+
+cmake "../${OTB_PKG}/SuperBuild" \
+  -DCMAKE_BUILD_TYPE=Release \
+  -DCMAKE_INSTALL_PREFIX="$INSTALL_DIR" \
+  -DOTB_WRAP_PYTHON=ON \
+  -DBUILD_TESTING=OFF \
+  -DUSE_SYSTEM_GDAL=ON \
+  -DUSE_SYSTEM_QT=ON \
+  -DUSE_SYSTEM_BOOST=ON \
+  -DUSE_SYSTEM_TIFF=ON \
+  -DUSE_SYSTEM_PNG=ON \
+  -DUSE_SYSTEM_JPEG=ON \
+  -DUSE_SYSTEM_ZLIB=ON \
+  -DUSE_SYSTEM_EXPAT=ON \
+  -DUSE_SYSTEM_CURL=ON \
+  -DUSE_SYSTEM_OPENTHREADS=ON \
+  -DUSE_SYSTEM_PYTHON=ON \
+  -DUSE_SYSTEM_ITK=OFF \
+  -DUSE_SYSTEM_FREETYPE=ON \
+  -DUSE_SYSTEM_OPENJPEG=ON \
+  -DUSE_SYSTEM_GEOS=ON \
+  -DUSE_SYSTEM_XTIFF=ON
+
+echo "🔨 Compilando todo con make..."
 make -j"$(nproc)"
-sudo make install
 cd -
 
+# 📦 Crear paquetes .deb
 echo "📦 Generando paquetes .deb desde $INSTALL_DIR"
 rm -rf "$BUILD_DEB"
 mkdir -p "$BUILD_DEB"
 
-##############################################
-# 🔹 Paquete otb-bin
-##############################################
+## otb-bin
 PKG_BIN="$BUILD_DEB/${OTB_PKG}-bin"
 mkdir -p "$PKG_BIN/DEBIAN"
 mkdir -p "$PKG_BIN/$INSTALL_DIR"
@@ -63,9 +92,7 @@ rsync -a "$INSTALL_DIR/" "$PKG_BIN/$INSTALL_DIR/" \
   --exclude='*.h' \
   --delete
 
-##############################################
-# 🔹 Paquete python3-otb
-##############################################
+## python3-otb
 PKG_PY="$BUILD_DEB/python3-${OTB_PKG}"
 mkdir -p "$PKG_PY/DEBIAN"
 mkdir -p "$PKG_PY/$INSTALL_DIR"
@@ -83,9 +110,7 @@ EOF
 
 rsync -a "$INSTALL_DIR/lib/otb/python" "$PKG_PY/$INSTALL_DIR/lib/otb/"
 
-##############################################
-# 🔹 Paquete libotb-dev
-##############################################
+## libotb-dev
 PKG_DEV="$BUILD_DEB/libotb-dev"
 mkdir -p "$PKG_DEV/DEBIAN"
 mkdir -p "$PKG_DEV/$INSTALL_DIR"
@@ -104,9 +129,7 @@ rsync -a "$INSTALL_DIR/include" "$PKG_DEV/$INSTALL_DIR/"
 rsync -a "$INSTALL_DIR/lib/cmake" "$PKG_DEV/$INSTALL_DIR/lib/"
 rsync -a "$INSTALL_DIR/lib/pkgconfig" "$PKG_DEV/$INSTALL_DIR/lib/"
 
-##############################################
-# 🔧 Permisos y construcción
-##############################################
+# 🔧 Final
 find "$BUILD_DEB" -type d -exec chmod 755 {} \;
 
 echo "📦 Construyendo paquetes .deb..."
@@ -114,12 +137,5 @@ dpkg-deb --build "$PKG_BIN"
 dpkg-deb --build "$PKG_PY"
 dpkg-deb --build "$PKG_DEV"
 
-sudo mv /tmp/ITKModuleAPI.cmake  /usr/lib/x86_64-linux-gnu/cmake/ITK-5.3/
-
-if [ -d /tmp/ITKModuleAPI.cmake ]; then
-  echo "🔧 Restaurando ITKModuleAPI.cmake..."
-  sudo mv /usr/lib/x86_64-linux-gnu/cmake/ITK-5.3/ITKModuleAPI.cmake /tmp
-fi
-
-echo "✅ Paquetes generados en $BUILD_DEB:"
+echo "✅ Paquetes generados:"
 ls -lh "$BUILD_DEB"/*.deb

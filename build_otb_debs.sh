@@ -24,7 +24,7 @@ echo "🛠️ Compilando OTB desde fuente..."
 rm -rf "$BUILD_SRC"
 mkdir -p "$BUILD_SRC"
 cd "$BUILD_SRC"
-cmake "$SRC_DIR" -DCMAKE_INSTALL_PREFIX="$INSTALL_DIR" -DCMAKE_BUILD_TYPE=Release
+cmake "$SRC_DIR" -DCMAKE_INSTALL_PREFIX="$INSTALL_DIR" -DOTB_USE_NEURALNET=OFF -DCMAKE_BUILD_TYPE=Release
 make -j"$(nproc)"
 sudo make install
 cd -

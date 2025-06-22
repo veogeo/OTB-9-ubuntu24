@@ -68,6 +68,22 @@ echo "📦 Generando paquetes .deb desde $INSTALL_DIR"
 rm -rf "$BUILD_DEB"
 mkdir -p "$BUILD_DEB"
 
+cat > "$PKG_DEV/DEBIAN/control" <<EOF
+Package: libotb-dev
+Version: $OTB_VERSION
+Section: libdevel
+Priority: optional
+Architecture: amd64
+Maintainer: TuNombre <tu@email.com>
+Description: Orfeo Toolbox $OTB_VERSION (archivos de desarrollo)
+EOF
+
+rsync -a "$INSTALL_DIR/include" "$PKG_DEV/$INSTALL_DIR/"
+rsync -a "$INSTALL_DIR/lib/cmake" "$PKG_DEV/$INSTALL_DIR/lib/"
+rsync -a "$INSTALL_DIR/lib/pkgconfig" "$PKG_DEV/$INSTALL_DIR/lib/"
+
+mv "$INSTALL_DIR/lib/cmake" /tmp # Mover cmake a /tmp para evitar conflictos
+
 ## otb-bin
 PKG_BIN="$BUILD_DEB/${OTB_PKG}-bin"
 mkdir -p "$PKG_BIN/DEBIAN"
@@ -89,7 +105,6 @@ rsync -a "$INSTALL_DIR/" "$PKG_BIN/$INSTALL_DIR/" \
   --include 'share/***' \
   --exclude='include' \
   --exclude='cmake/***' \
-  --exclude='lib/cmake/***' \
   --exclude='*.h' \
   --delete
 
@@ -115,20 +130,6 @@ rsync -a "$INSTALL_DIR/lib/otb/python" "$PKG_PY/$INSTALL_DIR/lib/otb/"
 PKG_DEV="$BUILD_DEB/libotb-dev"
 mkdir -p "$PKG_DEV/DEBIAN"
 mkdir -p "$PKG_DEV/$INSTALL_DIR"
-
-cat > "$PKG_DEV/DEBIAN/control" <<EOF
-Package: libotb-dev
-Version: $OTB_VERSION
-Section: libdevel
-Priority: optional
-Architecture: amd64
-Maintainer: TuNombre <tu@email.com>
-Description: Orfeo Toolbox $OTB_VERSION (archivos de desarrollo)
-EOF
-
-rsync -a "$INSTALL_DIR/include" "$PKG_DEV/$INSTALL_DIR/"
-rsync -a "$INSTALL_DIR/lib/cmake" "$PKG_DEV/$INSTALL_DIR/lib/"
-rsync -a "$INSTALL_DIR/lib/pkgconfig" "$PKG_DEV/$INSTALL_DIR/lib/"
 
 # 🔧 Final
 find "$BUILD_DEB" -type d -exec chmod 755 {} \;

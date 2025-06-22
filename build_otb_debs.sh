@@ -68,6 +68,11 @@ echo "📦 Generando paquetes .deb desde $INSTALL_DIR"
 rm -rf "$BUILD_DEB"
 mkdir -p "$BUILD_DEB"
 
+## libotb-dev
+PKG_DEV="$BUILD_DEB/libotb-dev"
+mkdir -p "$PKG_DEV/DEBIAN"
+mkdir -p "$PKG_DEV/$INSTALL_DIR"
+
 cat > "$PKG_DEV/DEBIAN/control" <<EOF
 Package: libotb-dev
 Version: $OTB_VERSION
@@ -82,7 +87,7 @@ rsync -a "$INSTALL_DIR/include" "$PKG_DEV/$INSTALL_DIR/"
 rsync -a "$INSTALL_DIR/lib/cmake" "$PKG_DEV/$INSTALL_DIR/lib/"
 rsync -a "$INSTALL_DIR/lib/pkgconfig" "$PKG_DEV/$INSTALL_DIR/lib/"
 
-mv "$INSTALL_DIR/lib/cmake" /tmp # Mover cmake a /tmp para evitar conflictos
+mv "$INSTALL_DIR/lib/cmake" /tmp
 
 ## otb-bin
 PKG_BIN="$BUILD_DEB/${OTB_PKG}-bin"
@@ -104,9 +109,11 @@ rsync -a "$INSTALL_DIR/" "$PKG_BIN/$INSTALL_DIR/" \
   --include 'lib/***' \
   --include 'share/***' \
   --exclude='include' \
-  --exclude='cmake/***' \
+  --exclude='cmake' \
   --exclude='*.h' \
   --delete
+
+mv /tmp/lib/cmake "$INSTALL_DIR"
 
 ## python3-otb
 PKG_PY="$BUILD_DEB/python3-${OTB_PKG}"
@@ -125,11 +132,6 @@ Description: Orfeo Toolbox $OTB_VERSION (bindings de Python 3)
 EOF
 
 rsync -a "$INSTALL_DIR/lib/otb/python" "$PKG_PY/$INSTALL_DIR/lib/otb/"
-
-## libotb-dev
-PKG_DEV="$BUILD_DEB/libotb-dev"
-mkdir -p "$PKG_DEV/DEBIAN"
-mkdir -p "$PKG_DEV/$INSTALL_DIR"
 
 # 🔧 Final
 find "$BUILD_DEB" -type d -exec chmod 755 {} \;

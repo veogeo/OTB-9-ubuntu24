@@ -113,7 +113,7 @@ rsync -a "$INSTALL_DIR/" "$PKG_BIN/$INSTALL_DIR/" \
   --exclude='*.h' \
   --delete
 
-mv /tmp/lib/cmake "$INSTALL_DIR"
+mv /tmp/cmake "$INSTALL_DIR"/lib/
 
 ## python3-otb
 PKG_PY="$BUILD_DEB/python3-${OTB_PKG}"

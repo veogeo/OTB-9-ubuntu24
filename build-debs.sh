@@ -2,20 +2,23 @@
 set -e
 
 VERSION="9.1.1"
+API_VERSION="9.1"
 ARCH="amd64"
 SRC_DIR="./dist/otb-$VERSION"
 PKGROOT="/tmp/pkgroot"
 FINAL_DIR="$PKGROOT/otb-$VERSION"
 BUILD_DIR="./build"
 
+INSTALL_PREFIX="/opt/otb-$VERSION"
+
 # Limpieza
 rm -rf "$PKGROOT" "$BUILD_DIR"
 mkdir -p "$FINAL_DIR" "$BUILD_DIR"
 
-echo "📁 Copying OTB source into $FINAL_DIR"
+echo "📁 Copiando OTB en $FINAL_DIR"
 cp -r "$SRC_DIR"/* "$FINAL_DIR/"
 
-echo "🔁 Re-generating Python bindings in $FINAL_DIR"
+echo "🔁 Regenerando bindings de Python"
 cd "$FINAL_DIR"
 find "$FINAL_DIR/bin/" -xtype l -exec rm -v {} \;
 find "$FINAL_DIR/bin/" -type f -exec chmod +x {} \;
@@ -24,112 +27,146 @@ source ./otbenv.profile
 cd - > /dev/null
 
 # 1. otb-bin
-mkdir -p "$BUILD_DIR/otb-bin/DEBIAN"
-mkdir -p "$BUILD_DIR/otb-bin/usr/lib/otb-$VERSION"
-mkdir -p "$BUILD_DIR/otb-bin/usr/bin"
+PKG_BIN="$BUILD_DIR/otb-bin"
+mkdir -p "$PKG_BIN/DEBIAN"
+mkdir -p "$PKG_BIN$INSTALL_PREFIX"
 
-# Copiar TODO (excepto CMake que irá a libotb-dev)
-rsync -a --exclude='lib/cmake' "$FINAL_DIR/" "$BUILD_DIR/otb-bin/usr/lib/otb-$VERSION/"
+rsync -a \
+  --exclude='lib/cmake' \
+  --exclude='include' \
+  "$FINAL_DIR/" "$PKG_BIN$INSTALL_PREFIX/"
 
 # 🔧 Reescribir otbcli y otbgui para que usen la ruta absoluta correcta a otbenv.profile
 for script in otbcli otbgui; do
-  WRAPPER="$BUILD_DIR/otb-bin/usr/lib/otb-$VERSION/bin/$script"
+  WRAPPER="$BUILD_DIR/otb-bin/opt/otb-$VERSION/bin/$script"
   if [ -f "$WRAPPER" ]; then
     sed -i '1 s|^#!.*|#!/bin/bash|' "$WRAPPER"
-    sed -i 's|\. "\$CURRENT_SCRIPT_DIR/../otbenv\.profile"|. /usr/lib/otb-'"$VERSION"'/otbenv.profile|' "$WRAPPER"
+    sed -i 's|\. "\$CURRENT_SCRIPT_DIR/../otbenv\.profile"|. /opt/otb-'"$VERSION"'/otbenv.profile|' "$WRAPPER"
   fi
 done
 
-# Symlinks en /usr/bin
-for exe in "$BUILD_DIR/otb-bin/usr/lib/otb-$VERSION/bin/"*; do
-  [ -x "$exe" ] || continue
-  exe_name=$(basename "$exe")
+# Wrapper de entorno
+mkdir -p "$PKG_BIN/etc/profile.d"
+cat > "$PKG_BIN/etc/profile.d/otb-$VERSION.sh" <<EOF
+#!/bin/bash
+export OTB_HOME=$INSTALL_PREFIX
+export PATH=\$OTB_HOME/bin:\$PATH
+export LD_LIBRARY_PATH=\$OTB_HOME/lib:\$LD_LIBRARY_PATH
+export PYTHONPATH=\$OTB_HOME/lib/python3/dist-packages:\$PYTHONPATH
+export PKG_CONFIG_PATH=\$OTB_HOME/lib/pkgconfig:\$PKG_CONFIG_PATH
+export CMAKE_PREFIX_PATH=\$OTB_HOME
+EOF
 
-# ⚠️ Excluir binarios si ya existen en el sistema como parte de otro paquete
-if dpkg -S "/usr/bin/$exe_name" 2>/dev/null | grep -vq "no path found" && dpkg -S "/usr/bin/$exe_name" 2>/dev/null | grep -qv otb; then
-  echo "⏩ Skipping system-installed binary: $exe_name (belongs to another package)"
-  continue
-fi
+chmod +x "$PKG_BIN/etc/profile.d/otb-$VERSION.sh"
 
-  ln -s "/usr/lib/otb-$VERSION/bin/$exe_name" "$BUILD_DIR/otb-bin/usr/bin/$exe_name"
-done
-
-# Symlink a otbenv.profile
-mkdir -p "$BUILD_DIR/otb-bin/etc/profile.d"
-ln -s "/usr/lib/otb-$VERSION/otbenv.profile" "$BUILD_DIR/otb-bin/etc/profile.d/otb.sh"
-
-cat > "$BUILD_DIR/otb-bin/DEBIAN/control" <<EOF
+cat > "$PKG_BIN/DEBIAN/control" <<EOF
 Package: otb-bin
 Version: $VERSION
 Section: science
 Priority: optional
 Architecture: $ARCH
 Maintainer: You <your@email.com>
-Description: Orfeo Toolbox $VERSION - Main binaries and shared files
+Description: Orfeo Toolbox $VERSION (instalado en /opt/otb-$VERSION)
 EOF
 
 # 2. libotb-dev
-mkdir -p "$BUILD_DIR/libotb-dev/DEBIAN"
-mkdir -p "$BUILD_DIR/libotb-dev/usr/include/otb"
-mkdir -p "$BUILD_DIR/libotb-dev/usr/lib/otb-$VERSION/lib"
+PKG_DEV="$BUILD_DIR/libotb-dev"
+mkdir -p "$PKG_DEV/DEBIAN"
+mkdir -p "$PKG_DEV$INSTALL_PREFIX/include/OTB-$API_VERSION"
+mkdir -p "$PKG_DEV$INSTALL_PREFIX/lib/cmake/OTB-$API_VERSION"
+mkdir -p "$PKG_DEV$INSTALL_PREFIX/lib/pkgconfig"
 
-# Solo headers y cmake (no .so)
-cp -r "$FINAL_DIR/include/"* "$BUILD_DIR/libotb-dev/usr/include/otb/"
-cp -r "$FINAL_DIR/lib/cmake" "$BUILD_DIR/libotb-dev/usr/lib/otb-$VERSION/lib/"
+cp -r "$FINAL_DIR/include/"* "$PKG_DEV$INSTALL_PREFIX/include/"
+cp -r "$FINAL_DIR/lib/cmake/OTB-$API_VERSION/"* "$PKG_DEV$INSTALL_PREFIX/lib/cmake/OTB-$API_VERSION/"
 
-cat > "$BUILD_DIR/libotb-dev/DEBIAN/control" <<EOF
+ITK_VERSION=$(basename "$(find "$FINAL_DIR/include" -maxdepth 1 -type d -name 'ITK-*' | head -n1)")
+
+# Buscar bibliotecas de OTB
+OTB_LIBS=$(find "$FINAL_DIR/lib" -maxdepth 1 -type f -name 'lib*.so*' \
+  | sed -E 's|.*/lib(.*)\.so.*|\1|' \
+  | sort -u \
+  | sed 's/^/-l/')
+
+# Buscar bibliotecas de ITK
+ITK_LIBS=$(find "$FINAL_DIR/lib" -maxdepth 1 -type f -name 'libITK*.so*' \
+  | sed -E 's|.*/lib(.*)\.so.*|\1|' \
+  | sort -u \
+  | sed 's/^/-l/')
+
+echo $ITK_LIBS
+
+# LIBS="$OTB_LIBS $ITK_LIBS"
+LIBS="$OTB_LIBS"
+
+cat > "$PKG_DEV$INSTALL_PREFIX/lib/pkgconfig/otb.pc" <<EOF
+prefix=$INSTALL_PREFIX
+exec_prefix=\${prefix}
+includedir=\${prefix}/include/OTB-$API_VERSION
+libdir=\${exec_prefix}/lib
+
+Name: OTB
+Description: Orfeo Toolbox
+Version: $VERSION
+Cflags: -I\${includedir} -I\${prefix}/include -I\${prefix}/include/${ITK_VERSION}
+Libs: -L\${libdir} $LIBS
+EOF
+
+cat > "$PKG_DEV/DEBIAN/control" <<EOF
 Package: libotb-dev
 Version: $VERSION
 Section: libdevel
 Priority: optional
 Architecture: $ARCH
 Maintainer: You
-Description: Orfeo Toolbox $VERSION - C++ headers and CMake configs
+Description: Orfeo Toolbox $VERSION headers, CMake y pkg-config (instalado en /opt/otb-$VERSION)
 Depends: otb-bin (= $VERSION)
 EOF
 
 # 3. python3-otb
 if [ -f "$FINAL_DIR/lib/otb/python/_otbApplication.so" ]; then
-  mkdir -p "$BUILD_DIR/python3-otb/DEBIAN"
-  mkdir -p "$BUILD_DIR/python3-otb/usr/lib/python3/dist-packages/otb"
+  PKG_PY="$BUILD_DIR/python3-otb"
+  mkdir -p "$PKG_PY/DEBIAN"
+  mkdir -p "$PKG_PY$INSTALL_PREFIX/lib/python3/dist-packages/otb"
 
-  cp "$FINAL_DIR/lib/otb/python/"* "$BUILD_DIR/python3-otb/usr/lib/python3/dist-packages/otb/"
+  cp "$FINAL_DIR/lib/otb/python/"* "$PKG_PY$INSTALL_PREFIX/lib/python3/dist-packages/otb/"
 
-  cat > "$BUILD_DIR/python3-otb/DEBIAN/control" <<EOF
+  cat > "$PKG_PY/DEBIAN/control" <<EOF
 Package: python3-otb
 Version: $VERSION
 Section: python
 Priority: optional
 Architecture: $ARCH
 Maintainer: You
-Description: Orfeo Toolbox $VERSION - Python bindings
+Description: Python bindings para OTB $VERSION (instalado en /opt/otb-$VERSION)
 Depends: otb-bin (= $VERSION), python3
 EOF
 fi
 
 # 4. otb-examples
 if [ -d "$FINAL_DIR/examples" ]; then
-  mkdir -p "$BUILD_DIR/otb-examples/DEBIAN"
-  mkdir -p "$BUILD_DIR/otb-examples/usr/share/doc/otb-$VERSION/examples"
-  cp -r "$FINAL_DIR/examples/"* "$BUILD_DIR/otb-examples/usr/share/doc/otb-$VERSION/examples/"
+  PKG_EX="$BUILD_DIR/otb-examples"
+  mkdir -p "$PKG_EX/DEBIAN"
+  mkdir -p "$PKG_EX$INSTALL_PREFIX/examples"
+  cp -r "$FINAL_DIR/examples/"* "$PKG_EX$INSTALL_PREFIX/examples/"
 
-  cat > "$BUILD_DIR/otb-examples/DEBIAN/control" <<EOF
+  cat > "$PKG_EX/DEBIAN/control" <<EOF
 Package: otb-examples
 Version: $VERSION
 Section: doc
 Priority: optional
 Architecture: all
 Maintainer: You
-Description: Orfeo Toolbox $VERSION - Example scripts and usage samples
+Description: Ejemplos de OTB $VERSION (instalado en /opt/otb-$VERSION)
 Depends: otb-bin (= $VERSION)
 EOF
 fi
 
-# Empaquetar todo
+# Generar .deb
 for pkg in otb-bin libotb-dev python3-otb otb-examples; do
   if [ -d "$BUILD_DIR/$pkg" ]; then
     dpkg-deb --build "$BUILD_DIR/$pkg"
   fi
 done
 
-echo "✅ Done! .deb packages generated in $BUILD_DIR/"
+echo "✅ ¡Listo! Paquetes .deb generados en $BUILD_DIR/"
+

@@ -95,7 +95,7 @@ rsync -a "$INSTALL_DIR/" "$PKG_BIN/$INSTALL_DIR/" \
 ## python3-otb
 PKG_PY="$BUILD_DEB/python3-${OTB_PKG}"
 mkdir -p "$PKG_PY/DEBIAN"
-mkdir -p "$PKG_PY/$INSTALL_DIR"
+mkdir -p "$PKG_PY/$INSTALL_DIR/lib/otb"
 
 cat > "$PKG_PY/DEBIAN/control" <<EOF
 Package: python3-otb

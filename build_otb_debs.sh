@@ -82,7 +82,7 @@ Priority: optional
 Architecture: amd64
 Maintainer: TuNombre <tu@email.com>
 Description: Orfeo Toolbox $OTB_VERSION (archivos de desarrollo)
-Depends: otb-bin (= $VERSION)
+Depends: otb-bin (= 9.1.1)
 EOF
 
 rsync -a "$INSTALL_DIR/include" "$PKG_DEV/$INSTALL_DIR/"

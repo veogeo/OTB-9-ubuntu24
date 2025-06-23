@@ -99,7 +99,7 @@ Version: $OTB_VERSION
 Section: libdevel
 Priority: optional
 Architecture: amd64
-Maintainer: TuNombre <tu@email.com>
+Maintainer: César Benjamín <cesarbenjamindotnet@gmail.com>
 Description: Orfeo Toolbox $OTB_VERSION (archivos de desarrollo)
 Depends: otb-bin (= 9.1.1)
 EOF
@@ -111,7 +111,7 @@ mv "$INSTALL_DIR/lib/cmake" /tmp
 
 # 🩹 Corrigir otbenv.profile para usar rutas del sistema
 OTBENV="$PKG_DEV/../../otb-9.1.1/Packaging/Files/otbenv.profile"
-POSTINSTALL="$BUILD_DEB/otb-9.1.1-bin/opt/otb-9.1.1/tools/post_install.sh"
+POSTINSTALL="$SB_DIR/OTB/build/post_install.sh"
 
 echo "🩹 Corrigiendo $OTBENV..."
 
@@ -149,7 +149,7 @@ Version: $OTB_VERSION
 Section: science
 Priority: optional
 Architecture: amd64
-Maintainer: TuNombre <tu@email.com>
+Maintainer: César Benjamín <cesarbenjamindotnet@gmail.com>
 Depends: python3
 Description: Orfeo Toolbox $OTB_VERSION (bindings de Python 3)
 EOF
@@ -173,7 +173,7 @@ Version: $OTB_VERSION
 Section: science
 Priority: optional
 Architecture: amd64
-Maintainer: TuNombre <tu@email.com>
+Maintainer: César Benjamín <cesarbenjamindotnet@gmail.com>
 Description: Orfeo Toolbox $OTB_VERSION (binarios y librerías principales)
 EOF
 

@@ -14,13 +14,14 @@ BUILD_DEB="$(pwd)/build-deb-${OTB_VERSION}"
 # 🧩 Instalar dependencias del sistema
 echo "📦 Instalando dependencias del sistema..."
 sudo apt update
-sudo apt install -y \
+sudo apt install -y --no-install-recommends \
+  ca-certificates curl make cmake g++ gcc git git-lfs libtool swig \
   build-essential cmake git wget rsync fakeroot dpkg-dev devscripts \
-  libgdal-dev qtbase5-dev qttools5-dev qttools5-dev-tools \
-  libboost-all-dev libtiff-dev libjpeg-dev libpng-dev zlib1g-dev \
-  libexpat1-dev libcurl4-openssl-dev libopenthreads-dev \
-  python3 python3-dev python3-numpy libfreetype-dev \
-  libopenjp2-7-dev libgeos-dev libxt-dev
+  libgdal-dev qtbase5-dev qttools5-dev qttools5-dev-tools libboost-all-dev \
+  libboost-all-dev libtiff-dev libjpeg-dev libpng-dev zlib1g-dev  patch \
+  libexpat1-dev libcurl4-openssl-dev libopenthreads-dev libopenjp2-7-dev \
+  python3 python3-dev python3-numpy python3-pip libfreetype-dev pkg-config \
+  libopenjp2-7-dev libgeos-dev libxt-dev libmuparser-dev libmuparser2v5
 
 # 📥 Descargar fuente de OTB
 if [ ! -d "$SRC_DIR" ]; then
@@ -59,7 +60,15 @@ cmake "../${OTB_PKG}/SuperBuild" \
   -DUSE_SYSTEM_GEOS=ON \
   -DUSE_SYSTEM_XTIFF=ON \
   -DOTB_BUILD_DEFAULT_MODULES=ON \
-  -DOTB_MODULES_ENABLED=ALL
+  -DOTB_MODULES_ENABLED=ALL \
+  -DModule_OTBAppImageUtils=ON \
+  -DModule_OTBAppMathParser=ON \
+  -DModule_OTBAppProjection=ON \
+  -DModule_OTBImageManipulation=ON \
+  -DModule_OTBImageStatistics=ON \
+  -DModule_OTBMathParser=ON \
+  -DModule_OTBProjection=ON \
+  -DModule_OTBTransform=ON
 
 echo "🔨 Compilando todo con make..."
 make -j"$(nproc)"

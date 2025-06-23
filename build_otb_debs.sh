@@ -132,11 +132,9 @@ sed -i "/# export PYTHONPATH to import otbApplication.py/,/fi/ {
   /fi/d
 }" "$OTBENV"
 
-# gdal-config
 sed -i "s|\"\$OTB_INSTALL_DIR\"/bin/gdal-config|/usr/bin/gdal-config|" "$POSTINSTALL"
-# curl-config
 sed -i "s|\"\$OTB_INSTALL_DIR\"/bin/curl-config|/usr/bin/curl-config|" "$POSTINSTALL"
-
+sed -i 's|osgeo_pkg_path=$(find "$OTB_INSTALL_DIR/lib" -mindepth 3 -maxdepth 3 -type d -name "osgeo")|osgeo_pkg_path=/usr/lib/python3/dist-packages/osgeo|' "$POSTINSTALL"
 
 ## python3-otb
 PKG_PY="$BUILD_DEB/python3-${OTB_PKG}"

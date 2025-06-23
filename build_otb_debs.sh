@@ -60,7 +60,14 @@ cmake "../${OTB_PKG}/SuperBuild" \
   -DUSE_SYSTEM_GEOS=ON \
   -DUSE_SYSTEM_XTIFF=ON \
   -DOTB_BUILD_DEFAULT_MODULES=ON \
-  -DOTB_MODULES_ENABLED=ALL
+  -DOTB_MODULES_ENABLED=ALL \
+  -DCMAKE_CACHE_ARGS:STRING="
+    -DModule_OTBImageManipulation:BOOL=ON
+    -DModule_OTBImageStatistics:BOOL=ON
+    -DModule_OTBMathParser:BOOL=ON
+    -DModule_OTBProjection:BOOL=ON
+    -DModule_OTBTransform:BOOL=ON
+  "
 
 echo "🔨 Compilando todo con make..."
 make -j"$(nproc)"

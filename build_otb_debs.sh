@@ -45,8 +45,6 @@ cmake "../${OTB_PKG}/SuperBuild" \
   -DOTB_WRAP_PYTHON=ON \
   -DBUILD_TESTING=OFF
 
-
-
 echo "🔨 Compilando todo con make..."
 make -j"$(nproc)"
 cd -

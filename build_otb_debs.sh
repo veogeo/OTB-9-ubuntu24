@@ -38,6 +38,7 @@ rm -rf "$SB_DIR"
 mkdir -p "$SB_DIR"
 cd "$SB_DIR"
 
+
 cmake "../${OTB_PKG}/SuperBuild" \
   -DCMAKE_BUILD_TYPE=Release \
   -DCMAKE_INSTALL_PREFIX="$INSTALL_DIR" \
@@ -59,20 +60,6 @@ cmake "../${OTB_PKG}/SuperBuild" \
   -DUSE_SYSTEM_OPENJPEG=ON \
   -DUSE_SYSTEM_GEOS=ON \
   -DUSE_SYSTEM_XTIFF=ON \
-  -DOTB_BUILD_DEFAULT_MODULES=ON \
-  -DOTB_BUILD_ImageManipulation=ON \
-  -DOTB_BUILD_ImageStatistics=ON \
-  -DOTB_BUILD_MathParser=ON \
-  -DOTB_BUILD_Projection=ON \
-  -DOTB_BUILD_Transform=ON \
-  -DOTB_BUILD_AppImageUtils=ON \
-  -DOTB_BUILD_AppMathParser=ON \
-  -DOTB_BUILD_AppProjection=ON \
-  -DOTB_BUILD_SAR=ON \
-  -DOTB_BUILD_VectorDataProcessing=ON \
-  -DOTB_BUILD_PointSet=ON \
-  -DOTB_BUILD_ImageClassification=ON \
-  -DOTB_BUILD_ImageRegistration=ON \
   -DOTB_CONFIGURE_OPTIONS:STRING="-DUSE_SYSTEM_GDAL=ON -DUSE_SYSTEM_QT=ON -DUSE_SYSTEM_BOOST=ON -DUSE_SYSTEM_TIFF=ON -DUSE_SYSTEM_PNG=ON -DUSE_SYSTEM_JPEG=ON -DUSE_SYSTEM_ZLIB=ON -DUSE_SYSTEM_EXPAT=ON -DUSE_SYSTEM_CURL=ON -DUSE_SYSTEM_OPENTHREADS=ON -DUSE_SYSTEM_PYTHON=ON -DUSE_SYSTEM_ITK=OFF -DUSE_SYSTEM_FREETYPE=ON -DUSE_SYSTEM_OPENJPEG=ON -DUSE_SYSTEM_GEOS=ON -DUSE_SYSTEM_XTIFF=ON -DModule_OTBImageManipulation=ON -DModule_OTBImageStatistics=ON -DModule_OTBMathParser=ON -DModule_OTBProjection=ON -DModule_OTBTransform=ON -DModule_OTBAppImageUtils=ON -DModule_OTBAppMathParser=ON -DModule_OTBAppProjection=ON -DModule_OTBSAR=ON -DModule_OTBVectorDataProcessing=ON -DModule_OTBPointSet=ON -DModule_OTBImageClassification=ON -DModule_OTBImageRegistration=ON"
 
 

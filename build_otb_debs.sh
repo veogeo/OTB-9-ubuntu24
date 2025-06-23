@@ -115,7 +115,7 @@ mv "$INSTALL_DIR/lib/cmake" /tmp
 
 # 🩹 Corrigir otbenv.profile para usar rutas del sistema
 OTBENV="$PKG_DEV/../../otb-9.1.1/Packaging/Files/otbenv.profile"
-POSTINSTALL="$PKG_DEV/../../otb-9.1.1/Packaging/Files/post_install.sh.in"
+POSTINSTALL="$PKG_DEV/../../build-superbuild-9.1.1/OTB/build/post_install.sh"
 
 echo "🩹 Corrigiendo $OTBENV..."
 
@@ -137,12 +137,9 @@ sed -i "/# export PYTHONPATH to import otbApplication.py/,/fi/ {
 }" "$OTBENV"
 
 # gdal-config
-sed -i "s|sed -i \"s/\\/builds\\/otb\\/xdk/\\\$OTB_INSTALL_DIR/g\" \"\\\$OTB_INSTALL_DIR\"/bin/gdal-config|sed -i \"s/\\/builds\\/otb\\/xdk/\\/usr/g\" /usr/bin/gdal-config|" "$POSTINSTALL"
-
+sed -i "s|\"\$OTB_INSTALL_DIR\"/bin/gdal-config|/usr/bin/gdal-config|" "$POSTINSTALL"
 # curl-config
-sed -i "s|sed -i \"s/\\/builds\\/otb\\/xdk/\\\$OTB_INSTALL_DIR/g\" \"\\\$OTB_INSTALL_DIR\"/bin/curl-config|sed -i \"s/\\/builds\\/otb\\/xdk/\\/usr/g\" /usr/bin/curl-config|" "$POSTINSTALL"
-
-
+sed -i "s|\"\$OTB_INSTALL_DIR\"/bin/curl-config|/usr/bin/curl-config|" "$POSTINSTALL"
 
 
 ## python3-otb
@@ -208,6 +205,8 @@ echo "📦 Construyendo paquetes .deb..."
 dpkg-deb --build "$PKG_BIN"
 dpkg-deb --build "$PKG_PY"
 dpkg-deb --build "$PKG_DEV"
+
+rm -rf "$INSTALL_DIR"
 
 echo "✅ Paquetes generados:"
 ls -lh "$BUILD_DEB"/*.deb

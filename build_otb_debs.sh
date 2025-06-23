@@ -61,13 +61,7 @@ cmake "../${OTB_PKG}/SuperBuild" \
   -DUSE_SYSTEM_XTIFF=ON \
   -DOTB_BUILD_DEFAULT_MODULES=ON \
   -DOTB_MODULES_ENABLED=ALL \
-  -DCMAKE_CACHE_ARGS:STRING="
-    -DModule_OTBImageManipulation:BOOL=ON
-    -DModule_OTBImageStatistics:BOOL=ON
-    -DModule_OTBMathParser:BOOL=ON
-    -DModule_OTBProjection:BOOL=ON
-    -DModule_OTBTransform:BOOL=ON
-  "
+  -DCMAKE_CACHE_ARGS:STRING="-DModule_OTBImageManipulation:BOOL=ON -DModule_OTBImageStatistics:BOOL=ON -DModule_OTBMathParser:BOOL=ON -DModule_OTBProjection:BOOL=ON -DModule_OTBTransform:BOOL=ON -DModule_OTBImageIO:BOOL=ON -DModule_OTBImageRegistration:BOOL=ON -DModule_OTBImageClassification:BOOL=ON -DModule_OTBVectorDataProcessing:BOOL=ON -DModule_OTBAppImageUtils:BOOL=ON -DModule_OTBAppMathParser:BOOL=ON -DModule_OTBAppProjection:BOOL=ON -DModule_OTBSAR:BOOL=ON -DModule_OTBPointSet:BOOL=ON"
 
 echo "🔨 Compilando todo con make..."
 make -j"$(nproc)"

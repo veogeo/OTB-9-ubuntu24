@@ -36,11 +36,8 @@ fi
 echo "🛠️ Configurando SuperBuild..."
 rm -rf "$SB_DIR"
 mkdir -p "$SB_DIR"
-# cp Local.cmake "$SB_DIR/"
 cd "$SB_DIR"
 
-# OTB_VERSION=9.1.1
-# OTB_PKG="otb-${OTB_VERSION}"
 cmake "../${OTB_PKG}/SuperBuild" \
   -DCMAKE_BUILD_TYPE=Release \
   -DCMAKE_INSTALL_PREFIX="$INSTALL_DIR" \
@@ -109,7 +106,6 @@ EOF
 
 rsync -a "$INSTALL_DIR/include" "$PKG_DEV/$INSTALL_DIR/"
 rsync -a "$INSTALL_DIR/lib/cmake" "$PKG_DEV/$INSTALL_DIR/lib/"
-# rsync -a "$INSTALL_DIR/lib/pkgconfig" "$PKG_DEV/$INSTALL_DIR/lib/"
 
 mv "$INSTALL_DIR/lib/cmake" /tmp
 

@@ -1,5 +1,0 @@
-OTB Version: 9.1.0
-Build Date: 2024-09-26T18:17:35
-otb.git repository info: 
- git log -1 --oneline     = [bed8703 Update Release notes] 
- git symbolic-ref -q HEAD = 

@@ -106,6 +106,8 @@ sed -i "s|^\(GDAL_DATA=\).*|\1\"/usr/share/gdal\"|" "$OTBENV"
 sed -i "s|^\(PROJ_LIB=\).*|\1\"/usr/share/proj\"|" "$OTBENV"
 sed -i "s|^\(CMAKE_PREFIX_PATH=\).*|\1\"/opt/${OTB_PKG}\"|" "$OTBENV"
 sed -i "s|^\(LD_LIBRARY_PATH=\).*|\1\"\$LD_LIBRARY_PATH:/opt/${OTB_PKG}/lib\"|" "$OTBENV"
+sed -i "s|^export LD_LIBRARY_PATH=\"\\\$OTB_INSTALL_DIR/lib:\\\$LD_LIBRARY_PATH\"|export LD_LIBRARY_PATH=\"\\\$LD_LIBRARY_PATH:\\\$OTB_INSTALL_DIR/lib\"|" "$OTBENV"
+
 
 # Corregir PYTHONPATH para dist-packages reales
 sed -i "s|lib/python3/dist-packages|lib/python3.12/site-packages|" "$OTBENV"

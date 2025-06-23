@@ -92,9 +92,8 @@ rsync -a "$INSTALL_DIR/lib/cmake" "$PKG_DEV/$INSTALL_DIR/lib/"
 
 mv "$INSTALL_DIR/lib/cmake" /tmp
 
-
 # 🩹 Corrigir otbenv.profile para usar rutas del sistema
-OTBENV="$PKG_DEV/opt/${OTB_PKG}/otbenv.profile"
+OTBENV="$PKG_DEV/../../otb-9.1.1/Packaging/Files/otbenv.profile"
 echo "🩹 Corrigiendo $OTBENV..."
 
 # Asignar variables a rutas del sistema

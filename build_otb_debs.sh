@@ -67,13 +67,13 @@ cd -
 # 🔧 Ajustes post-compilación..."
 echo "🩹 Corrigiendo otbenv.profile para usar rutas del sistema..."
 
-OTBENV="$PKG_BIN/opt/otb-9.1.1/otbenv.profile"
+OTBENV="$BUILD_DEB/opt/otb-9.1.1/otbenv.profile"
 
 # Asignar variables a rutas del sistema
-sed -i "s|^\(GDAL_DATA=\).*|\1\"/usr/share/gdal\"|" \"$OTBENV\"
-sed -i "s|^\(PROJ_LIB=\).*|\1\"/usr/share/proj\"|" \"$OTBENV\"
-sed -i "s|^\(CMAKE_PREFIX_PATH=\).*|\1\"/opt/otb-9.1.1\"|" \"$OTBENV\"
-sed -i "s|^\(LD_LIBRARY_PATH=\).*|\1\"/opt/otb-9.1.1/lib:\$LD_LIBRARY_PATH\"|" \"$OTBENV\"
+sed -i "s|^\(GDAL_DATA=\).*|\1\"/usr/share/gdal\"|" "$OTBENV"
+sed -i "s|^\(PROJ_LIB=\).*|\1\"/usr/share/proj\"|" "$OTBENV"
+sed -i "s|^\(CMAKE_PREFIX_PATH=\).*|\1\"/opt/otb-9.1.1\"|" "$OTBENV"
+sed -i "s|^\(LD_LIBRARY_PATH=\).*|\1\"/opt/otb-9.1.1/lib:\$LD_LIBRARY_PATH\"|" "$OTBENV"
 
 # Corregir PYTHONPATH para dist-packages reales
 sed -i "s|lib/python3/dist-packages|lib/python3.12/site-packages|" \"$OTBENV\"

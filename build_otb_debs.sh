@@ -67,7 +67,7 @@ cd -
 # 🔧 Ajustes post-compilación..."
 echo "🩹 Corrigiendo otbenv.profile para usar rutas del sistema..."
 
-OTBENV="$PKG_BIN/$INSTALL_DIR/otbenv.profile"
+OTBENV="$INSTALL_DIR/otbenv.profile"
 
 # Asignar variables a rutas del sistema
 sed -i "s|^\(GDAL_DATA=\).*|\1\"/usr/share/gdal\"|" \"$OTBENV\"

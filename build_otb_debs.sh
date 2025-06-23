@@ -36,10 +36,11 @@ fi
 echo "🛠️ Configurando SuperBuild..."
 rm -rf "$SB_DIR"
 mkdir -p "$SB_DIR"
-cp Local.cmake "$SB_DIR/"
+# cp Local.cmake "$SB_DIR/"
 cd "$SB_DIR"
 
-
+# OTB_VERSION=9.1.1
+# OTB_PKG="otb-${OTB_VERSION}"
 cmake "../${OTB_PKG}/SuperBuild" \
   -DCMAKE_BUILD_TYPE=Release \
   -DCMAKE_INSTALL_PREFIX="$INSTALL_DIR" \
@@ -60,7 +61,12 @@ cmake "../${OTB_PKG}/SuperBuild" \
   -DUSE_SYSTEM_FREETYPE=ON \
   -DUSE_SYSTEM_OPENJPEG=ON \
   -DUSE_SYSTEM_GEOS=ON \
-  -DUSE_SYSTEM_XTIFF=ON
+  -DUSE_SYSTEM_XTIFF=ON \
+  -DOTB_WRAP_CLI=ON \
+  -DModule_OTBAppMathParser=ON \
+  -DModule_OTBMathParser=ON \
+  -DModule_OTBImageManipulation=ON \
+  -DModule_OTBImageStatistics=ON
 
 echo "🔨 Compilando todo con make..."
 make -j"$(nproc)"

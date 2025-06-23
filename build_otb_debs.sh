@@ -34,8 +34,8 @@ fi
 
 # ⚙️ Configurar y compilar con SuperBuild
 echo "🛠️ Configurando SuperBuild..."
-rm -rf "$SB_DIR"
-mkdir -p "$SB_DIR"
+# rm -rf "$SB_DIR"
+# mkdir -p "$SB_DIR"
 # cp Local.cmake "$SB_DIR/"
 cd "$SB_DIR"
 

@@ -61,19 +61,19 @@ cmake "../${OTB_PKG}/SuperBuild" \
   -DUSE_SYSTEM_XTIFF=ON \
   -DOTB_BUILD_DEFAULT_MODULES=ON \
   -DOTB_MODULES_ENABLED=ALL \
-  -DOTB_BUILD_ImageManipulation \
-  -DOTB_BUILD_ImageStatistics \
-  -DOTB_BUILD_MathParser \
-  -DOTB_BUILD_Projection \
-  -DOTB_BUILD_Transform \
-  -DOTB_BUILD_AppImageUtils \
-  -DOTB_BUILD_AppMathParser \
-  -DOTB_BUILD_AppProjection \
-  -DOTB_BUILD_SAR \
-  -DOTB_BUILD_VectorDataProcessing \
-  -DOTB_BUILD_PointSet \
-  -DOTB_BUILD_ImageClassification \
-  -DOTB_BUILD_ImageRegistration \
+  -DOTB_BUILD_ImageManipulation=ON \
+  -DOTB_BUILD_ImageStatistics=ON \
+  -DOTB_BUILD_MathParser=ON \
+  -DOTB_BUILD_Projection=ON \
+  -DOTB_BUILD_Transform=ON \
+  -DOTB_BUILD_AppImageUtils=ON \
+  -DOTB_BUILD_AppMathParser=ON \
+  -DOTB_BUILD_AppProjection=ON \
+  -DOTB_BUILD_SAR=ON \
+  -DOTB_BUILD_VectorDataProcessing=ON \
+  -DOTB_BUILD_PointSet=ON \
+  -DOTB_BUILD_ImageClassification=ON \
+  -DOTB_BUILD_ImageRegistration=ON \
   -DCMAKE_CACHE_ARGS:STRING="-DUSE_SYSTEM_GDAL=ON -DUSE_SYSTEM_QT=ON -DUSE_SYSTEM_BOOST=ON -DUSE_SYSTEM_TIFF=ON -DUSE_SYSTEM_PNG=ON -DUSE_SYSTEM_JPEG=ON -DUSE_SYSTEM_ZLIB=ON -DUSE_SYSTEM_EXPAT=ON -DUSE_SYSTEM_CURL=ON -DUSE_SYSTEM_OPENTHREADS=ON -DUSE_SYSTEM_PYTHON=ON -DUSE_SYSTEM_ITK=OFF -DUSE_SYSTEM_FREETYPE=ON -DUSE_SYSTEM_OPENJPEG=ON -DUSE_SYSTEM_GEOS=ON -DUSE_SYSTEM_XTIFF=ON -DModule_OTBImageManipulation:BOOL=ON -DModule_OTBImageStatistics:BOOL=ON -DModule_OTBMathParser:BOOL=ON -DModule_OTBProjection:BOOL=ON -DModule_OTBTransform:BOOL=ON -DModule_OTBImageIO:BOOL=ON -DModule_OTBImageRegistration:BOOL=ON -DModule_OTBImageClassification:BOOL=ON -DModule_OTBVectorDataProcessing:BOOL=ON -DModule_OTBAppImageUtils:BOOL=ON -DModule_OTBAppMathParser:BOOL=ON -DModule_OTBAppProjection:BOOL=ON -DModule_OTBSAR:BOOL=ON -DModule_OTBPointSet:BOOL=ON" \
   -DOTB_CONFIGURE_OPTIONS:STRING="-DUSE_SYSTEM_GDAL=ON -DUSE_SYSTEM_QT=ON -DUSE_SYSTEM_BOOST=ON -DUSE_SYSTEM_TIFF=ON -DUSE_SYSTEM_PNG=ON -DUSE_SYSTEM_JPEG=ON -DUSE_SYSTEM_ZLIB=ON -DUSE_SYSTEM_EXPAT=ON -DUSE_SYSTEM_CURL=ON -DUSE_SYSTEM_OPENTHREADS=ON -DUSE_SYSTEM_PYTHON=ON -DUSE_SYSTEM_ITK=OFF -DUSE_SYSTEM_FREETYPE=ON -DUSE_SYSTEM_OPENJPEG=ON -DUSE_SYSTEM_GEOS=ON -DUSE_SYSTEM_XTIFF=ON -DModule_OTBImageManipulation=ON -DModule_OTBImageStatistics=ON -DModule_OTBMathParser=ON -DModule_OTBProjection=ON -DModule_OTBTransform=ON -DModule_OTBAppImageUtils=ON -DModule_OTBAppMathParser=ON -DModule_OTBAppProjection=ON -DModule_OTBSAR=ON -DModule_OTBVectorDataProcessing=ON -DModule_OTBPointSet=ON -DModule_OTBImageClassification=ON -DModule_OTBImageRegistration=ON"
 

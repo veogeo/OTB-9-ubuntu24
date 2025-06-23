@@ -64,21 +64,6 @@ echo "🔨 Compilando todo con make..."
 make -j"$(nproc)"
 cd -
 
-# 🔧 Ajustes post-compilación..."
-echo "🩹 Corrigiendo otbenv.profile para usar rutas del sistema..."
-
-OTBENV="$BUILD_DEB/opt/otb-9.1.1/otbenv.profile"
-
-# Asignar variables a rutas del sistema
-sed -i "s|^\(GDAL_DATA=\).*|\1\"/usr/share/gdal\"|" "$OTBENV"
-sed -i "s|^\(PROJ_LIB=\).*|\1\"/usr/share/proj\"|" "$OTBENV"
-sed -i "s|^\(CMAKE_PREFIX_PATH=\).*|\1\"/opt/otb-9.1.1\"|" "$OTBENV"
-sed -i "s|^\(LD_LIBRARY_PATH=\).*|\1\"/opt/otb-9.1.1/lib:\$LD_LIBRARY_PATH\"|" "$OTBENV"
-
-# Corregir PYTHONPATH para dist-packages reales
-sed -i "s|lib/python3/dist-packages|lib/python3.12/site-packages|" \"$OTBENV\"
-
-
 # 📦 Crear paquetes .deb
 echo "📦 Generando paquetes .deb desde $INSTALL_DIR"
 rm -rf "$BUILD_DEB"
@@ -106,6 +91,20 @@ rsync -a "$INSTALL_DIR/lib/cmake" "$PKG_DEV/$INSTALL_DIR/lib/"
 # rsync -a "$INSTALL_DIR/lib/pkgconfig" "$PKG_DEV/$INSTALL_DIR/lib/"
 
 mv "$INSTALL_DIR/lib/cmake" /tmp
+
+
+# 🩹 Corrigir otbenv.profile para usar rutas del sistema
+OTBENV="$PKG_DEV/opt/${OTB_PKG}/otbenv.profile"
+echo "🩹 Corrigiendo $OTBENV..."
+
+# Asignar variables a rutas del sistema
+sed -i "s|^\(GDAL_DATA=\).*|\1\"/usr/share/gdal\"|" "$OTBENV"
+sed -i "s|^\(PROJ_LIB=\).*|\1\"/usr/share/proj\"|" "$OTBENV"
+sed -i "s|^\(CMAKE_PREFIX_PATH=\).*|\1\"/opt/${OTB_PKG}\"|" "$OTBENV"
+sed -i "s|^\(LD_LIBRARY_PATH=\).*|\1\"/opt/${OTB_PKG}/lib:\$LD_LIBRARY_PATH\"|" "$OTBENV"
+
+# Corregir PYTHONPATH para dist-packages reales
+sed -i "s|lib/python3/dist-packages|lib/python3.12/site-packages|" "$OTBENV"
 
 
 ## python3-otb

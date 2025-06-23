@@ -113,6 +113,8 @@ mv "$INSTALL_DIR/lib/cmake" /tmp
 
 # 🩹 Corrigir otbenv.profile para usar rutas del sistema
 OTBENV="$PKG_DEV/../../otb-9.1.1/Packaging/Files/otbenv.profile"
+POSTINSTALL="$PKG_DEV/../../otb-9.1.1/Packaging/Files/post_install.sh.in"
+
 echo "🩹 Corrigiendo $OTBENV..."
 
 # Asignar variables a rutas del sistema
@@ -122,9 +124,23 @@ sed -i "s|^\(CMAKE_PREFIX_PATH=\).*|\1\"/opt/${OTB_PKG}\"|" "$OTBENV"
 sed -i "s|^\(LD_LIBRARY_PATH=\).*|\1\"\$LD_LIBRARY_PATH:/opt/${OTB_PKG}/lib\"|" "$OTBENV"
 sed -i "s|^export LD_LIBRARY_PATH=\"\\\$OTB_INSTALL_DIR/lib:\\\$LD_LIBRARY_PATH\"|export LD_LIBRARY_PATH=\"\\\$LD_LIBRARY_PATH:\\\$OTB_INSTALL_DIR/lib\"|" "$OTBENV"
 
+sed -i "/# export PYTHONPATH to import otbApplication.py/,/fi/ {
+  /# export PYTHONPATH to import otbApplication.py/d
+  /PYTHONPATH/d
+  /if/d
+  /  PYTHONPATH/d
+  /else/d
+  /  PYTHONPATH/d
+  /fi/d
+}" "$OTBENV"
 
-# Corregir PYTHONPATH para dist-packages reales
-sed -i "s|lib/python3/dist-packages|lib/python3.12/site-packages|" "$OTBENV"
+# gdal-config
+sed -i "s|sed -i \"s/\\/builds\\/otb\\/xdk/\\\$OTB_INSTALL_DIR/g\" \"\\\$OTB_INSTALL_DIR\"/bin/gdal-config|sed -i \"s/\\/builds\\/otb\\/xdk/\\/usr/g\" /usr/bin/gdal-config|" "$POSTINSTALL"
+
+# curl-config
+sed -i "s|sed -i \"s/\\/builds\\/otb\\/xdk/\\\$OTB_INSTALL_DIR/g\" \"\\\$OTB_INSTALL_DIR\"/bin/curl-config|sed -i \"s/\\/builds\\/otb\\/xdk/\\/usr/g\" /usr/bin/curl-config|" "$POSTINSTALL"
+
+
 
 
 ## python3-otb

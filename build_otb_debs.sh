@@ -36,7 +36,7 @@ fi
 echo "🛠️ Configurando SuperBuild..."
 # rm -rf "$SB_DIR"
 # mkdir -p "$SB_DIR"
-cp Local.cmake "$SB_DIR/"
+# cp Local.cmake "$SB_DIR/"
 cd "$SB_DIR"
 
 # OTB_VERSION=9.1.1
@@ -46,6 +46,7 @@ cmake "../${OTB_PKG}/SuperBuild" \
   -DCMAKE_INSTALL_PREFIX="$INSTALL_DIR" \
   -DOTB_WRAP_PYTHON=ON \
   -DBUILD_TESTING=OFF \
+  -DGDAL_CONFIG=/usr/bin/gdal-config \
   -DUSE_SYSTEM_GDAL=ON \
   -DUSE_SYSTEM_QT=ON \
   -DUSE_SYSTEM_BOOST=ON \
@@ -67,7 +68,10 @@ cmake "../${OTB_PKG}/SuperBuild" \
   -DOTB_BUILD_ImageManipulation=ON \
   -DOTB_BUILD_ImageStatistics=ON \
   -DOTB_BUILD_BandMath=ON \
-  -DOTB_CONFIGURE_OPTIONS:STRING="-DOTB_BUILD_MathParser=ON -DOTB_BUILD_ImageManipulation=ON -DOTB_BUILD_ImageStatistics=ON -DOTB_BUILD_BandMath=ON"
+  -DDOWNLOAD_LOCATION="$(pwd)/Downloads" \
+  -DOTB_CONFIGURE_OPTIONS:STRING="-DGDAL_CONFIG=/usr/bin/gdal-config -DUSE_SYSTEM_GDAL=ON -DUSE_SYSTEM_QT=ON -DUSE_SYSTEM_BOOST=ON -DUSE_SYSTEM_TIFF=ON -DUSE_SYSTEM_PNG=ON -DUSE_SYSTEM_JPEG=ON -DUSE_SYSTEM_ZLIB=ON -DUSE_SYSTEM_EXPAT=ON -DUSE_SYSTEM_CURL=ON -DUSE_SYSTEM_OPENTHREADS=ON -DUSE_SYSTEM_PYTHON=ON -DUSE_SYSTEM_ITK=OFF -DUSE_SYSTEM_FREETYPE=ON -DUSE_SYSTEM_OPENJPEG=ON -DUSE_SYSTEM_GEOS=ON -DUSE_SYSTEM_XTIFF=ON -DOTB_WRAP_CLI=ON -DOTB_BUILD_MathParser=ON -DOTB_BUILD_ImageManipulation=ON -DOTB_BUILD_ImageStatistics=ON -DOTB_BUILD_BandMath=ON"
+
+
 
 
 echo "🔨 Compilando todo con make..."

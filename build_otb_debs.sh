@@ -86,7 +86,7 @@ EOF
 
 rsync -a "$INSTALL_DIR/include" "$PKG_DEV/$INSTALL_DIR/"
 rsync -a "$INSTALL_DIR/lib/cmake" "$PKG_DEV/$INSTALL_DIR/lib/"
-rsync -a "$INSTALL_DIR/lib/pkgconfig" "$PKG_DEV/$INSTALL_DIR/lib/"
+# rsync -a "$INSTALL_DIR/lib/pkgconfig" "$PKG_DEV/$INSTALL_DIR/lib/"
 
 mv "$INSTALL_DIR/lib/cmake" /tmp
 

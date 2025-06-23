@@ -111,7 +111,7 @@ mv "$INSTALL_DIR/lib/cmake" /tmp
 
 # 🩹 Corrigir otbenv.profile para usar rutas del sistema
 OTBENV="$PKG_DEV/../../otb-9.1.1/Packaging/Files/otbenv.profile"
-POSTINSTALL="$PKG_DEV/../../build-superbuild-9.1.1/OTB/build/post_install.sh"
+POSTINSTALL="$BUILD_DEB/otb-9.1.1-bin/opt/otb-9.1.1/tools/post_install.sh"
 
 echo "🩹 Corrigiendo $OTBENV..."
 

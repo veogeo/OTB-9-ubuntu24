@@ -183,13 +183,20 @@ Description: Orfeo Toolbox $OTB_VERSION (binarios y librerías principales)
 EOF
 
 rsync -a "$INSTALL_DIR/" "$PKG_BIN/$INSTALL_DIR/" \
+  --include 'bin/' \
+  --include 'lib/' \
+  --include 'share/' \
+  --include 'bin/*' \
+  --include 'lib/*' \
+  --include 'share/*' \
+  --include 'bin/**' \
+  --include 'lib/**' \
+  --include 'share/**' \
   --include 'bin/***' \
   --include 'lib/***' \
   --include 'share/***' \
   --exclude='include' \
-  --exclude='cmake' \
-  --exclude='*.h' \
-  --delete
+  --exclude='cmake'
 
 # Regresar las bibliotecas de OTB y Python a sus ubicaciones originales
 mv /tmp/cmake "$INSTALL_DIR"/lib/

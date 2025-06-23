@@ -130,6 +130,7 @@ sed -i "/# export PYTHONPATH to import otbApplication.py/,/fi/ {
   /else/d
   /  PYTHONPATH/d
   /fi/d
+  //export PYTHONPATH=/opt/otb-9.1.1/lib/otb/python/d
 }" "$OTBENV"
 
 sed -i "s|\"\$OTB_INSTALL_DIR\"/bin/gdal-config|/usr/bin/gdal-config|" "$POSTINSTALL"

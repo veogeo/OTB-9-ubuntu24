@@ -66,7 +66,9 @@ cmake "../${OTB_PKG}/SuperBuild" \
   -DOTB_BUILD_MathParser=ON \
   -DOTB_BUILD_ImageManipulation=ON \
   -DOTB_BUILD_ImageStatistics=ON \
-  -DOTB_BUILD_BandMath=ON
+  -DOTB_BUILD_BandMath=ON \
+  -DOTB_CONFIGURE_OPTIONS:STRING="-DOTB_BUILD_MathParser=ON -DOTB_BUILD_ImageManipulation=ON -DOTB_BUILD_ImageStatistics=ON -DOTB_BUILD_BandMath=ON"
+
 
 echo "🔨 Compilando todo con make..."
 make -j"$(nproc)"

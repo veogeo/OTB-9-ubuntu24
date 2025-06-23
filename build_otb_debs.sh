@@ -105,7 +105,7 @@ echo "🩹 Corrigiendo $OTBENV..."
 sed -i "s|^\(GDAL_DATA=\).*|\1\"/usr/share/gdal\"|" "$OTBENV"
 sed -i "s|^\(PROJ_LIB=\).*|\1\"/usr/share/proj\"|" "$OTBENV"
 sed -i "s|^\(CMAKE_PREFIX_PATH=\).*|\1\"/opt/${OTB_PKG}\"|" "$OTBENV"
-sed -i "s|^\(LD_LIBRARY_PATH=\).*|\1\"/opt/${OTB_PKG}/lib:\$LD_LIBRARY_PATH\"|" "$OTBENV"
+sed -i "s|^\(LD_LIBRARY_PATH=\).*|\1\"\$LD_LIBRARY_PATH:/opt/${OTB_PKG}/lib\"|" "$OTBENV"
 
 # Corregir PYTHONPATH para dist-packages reales
 sed -i "s|lib/python3/dist-packages|lib/python3.12/site-packages|" "$OTBENV"

@@ -57,11 +57,27 @@ cmake "../${OTB_PKG}/SuperBuild" \
   -DUSE_SYSTEM_FREETYPE=ON \
   -DUSE_SYSTEM_OPENJPEG=ON \
   -DUSE_SYSTEM_GEOS=ON \
-  -DUSE_SYSTEM_XTIFF=ON
+  -DUSE_SYSTEM_XTIFF=ON \
+  -DOTB_BUILD_DEFAULT_MODULES=ON
 
 echo "🔨 Compilando todo con make..."
 make -j"$(nproc)"
 cd -
+
+# 🔧 Ajustes post-compilación..."
+echo "🩹 Corrigiendo otbenv.profile para usar rutas del sistema..."
+
+OTBENV="$PKG_BIN/$INSTALL_DIR/otbenv.profile"
+
+# Asignar variables a rutas del sistema
+sed -i "s|^\(GDAL_DATA=\).*|\1\"/usr/share/gdal\"|" \"$OTBENV\"
+sed -i "s|^\(PROJ_LIB=\).*|\1\"/usr/share/proj\"|" \"$OTBENV\"
+sed -i "s|^\(CMAKE_PREFIX_PATH=\).*|\1\"/opt/otb-9.1.1\"|" \"$OTBENV\"
+sed -i "s|^\(LD_LIBRARY_PATH=\).*|\1\"/opt/otb-9.1.1/lib:\$LD_LIBRARY_PATH\"|" \"$OTBENV\"
+
+# Corregir PYTHONPATH para dist-packages reales
+sed -i "s|lib/python3/dist-packages|lib/python3.12/site-packages|" \"$OTBENV\"
+
 
 # 📦 Crear paquetes .deb
 echo "📦 Generando paquetes .deb desde $INSTALL_DIR"

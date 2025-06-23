@@ -58,7 +58,8 @@ cmake "../${OTB_PKG}/SuperBuild" \
   -DUSE_SYSTEM_OPENJPEG=ON \
   -DUSE_SYSTEM_GEOS=ON \
   -DUSE_SYSTEM_XTIFF=ON \
-  -DOTB_BUILD_DEFAULT_MODULES=ON
+  -DOTB_BUILD_DEFAULT_MODULES=ON \
+  -DOTB_MODULES_ENABLED=ALL
 
 echo "🔨 Compilando todo con make..."
 make -j"$(nproc)"

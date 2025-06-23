@@ -39,12 +39,12 @@ mkdir -p "$SB_DIR"
 # cp Local.cmake "$SB_DIR/"
 cd "$SB_DIR"
 
+
 cmake "../${OTB_PKG}/SuperBuild" \
   -DCMAKE_BUILD_TYPE=Release \
   -DCMAKE_INSTALL_PREFIX="$INSTALL_DIR" \
   -DOTB_WRAP_PYTHON=ON \
   -DBUILD_TESTING=OFF \
-  -DOTB_USE_QT=ON \
   -DUSE_SYSTEM_GDAL=ON \
   -DUSE_SYSTEM_QT=ON \
   -DUSE_SYSTEM_BOOST=ON \
@@ -60,8 +60,7 @@ cmake "../${OTB_PKG}/SuperBuild" \
   -DUSE_SYSTEM_FREETYPE=ON \
   -DUSE_SYSTEM_OPENJPEG=ON \
   -DUSE_SYSTEM_GEOS=ON \
-  -DUSE_SYSTEM_XTIFF=ON \
-  -DOTB_BUILD_DEFAULT_MODULES=ON
+  -DUSE_SYSTEM_XTIFF=ON
 
 echo "🔨 Compilando todo con make..."
 make -j"$(nproc)"
